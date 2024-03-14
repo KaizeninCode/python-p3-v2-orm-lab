@@ -1,6 +1,7 @@
 # lib/employee.py
 from __init__ import CURSOR, CONN
 from department import Department
+from review import Review
 
 class Employee:
 
@@ -187,4 +188,16 @@ class Employee:
 
     def reviews(self):
         """Return list of reviews associated with current employee"""
-        pass
+        if self.id is None:
+            return []
+
+        sql = """
+            SELECT *
+            FROM reviews
+            WHERE employee_id = ?;
+        """
+        CURSOR.execute(sql, (self.id,))
+        rows = CURSOR.fetchall()
+        reviews = [Review(id=row[0], year=row[1], summary=row[2], employee_id=row[3]) for row in rows]
+        return reviews
+    
